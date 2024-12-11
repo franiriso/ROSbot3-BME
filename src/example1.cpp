@@ -1,7 +1,5 @@
 #include "obstacle_avoidance.h"
 
-//hello world
-
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
 
@@ -14,8 +12,11 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    auto node = std::make_shared<ObstacleAvoidance>();
-    rclcpp::spin(node);
+    auto options = rclcpp::NodeOptions().parameter_overrides({{"target_distance", target_distance}});
+    auto node = std::make_shared<ObstacleAvoidance>(options);
+    while (rclcpp::ok() && !node->GoalReached()) {
+        rclcpp::spin_some(node);
+    }
 
     rclcpp::shutdown();
     return 0;

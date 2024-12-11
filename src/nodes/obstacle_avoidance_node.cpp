@@ -2,11 +2,8 @@
 #include <cmath>
 #include <iostream>
 
-ObstacleAvoidance::ObstacleAvoidance() : Node("obstacle_avoidance_node"),
-                                         initial_position_x_(0.0),
-                                         obstacle_detected_l_(false),
-                                         obstacle_detected_r_(false),
-                                         goal_reached_(false) {
+ObstacleAvoidance::ObstacleAvoidance(const rclcpp::NodeOptions &options)
+    : Node("obstacle_avoidance_node", options), initial_position_x_(0.0), obstacle_detected_l_(false), obstacle_detected_r_(false), goal_reached_(false) {
     // Declare and initialize parameters
     this->declare_parameter<double>("target_distance", 1.0);
     this->declare_parameter<double>("object_distance_threshold", 0.25);
@@ -14,6 +11,7 @@ ObstacleAvoidance::ObstacleAvoidance() : Node("obstacle_avoidance_node"),
     this->declare_parameter<std::string>("cmd_vel_topic", "/cmd_vel");
     this->declare_parameter<std::string>("odometry_topic", "/odometry/filtered");
 
+    // Retrieve parameters
     target_distance_ = this->get_parameter("target_distance").as_double();
     object_distance_threshold_ = this->get_parameter("object_distance_threshold").as_double();
     lidar_topic_ = this->get_parameter("lidar_topic").as_string();
@@ -75,12 +73,13 @@ void ObstacleAvoidance::odomCallback(const nav_msgs::msg::Odometry::SharedPtr ms
 
     double distance_traveled = std::abs(current_position_x - initial_position_x_);
 
-    if (distance_traveled >= target_distance_) {
+    if (distance_traveled >= target_distance_ && !goal_reached_) {
         stopRobot();
         goal_reached_ = true;
         RCLCPP_INFO(this->get_logger(), "Goal reached! Stopping the robot.");
     } else if (!goal_reached_) {
         moveRobot();
+        RCLCPP_INFO(this->get_logger(), "Distance traveled: %.2f meters", distance_traveled);
     }
 }
 
@@ -88,14 +87,17 @@ void ObstacleAvoidance::moveRobot() {
     geometry_msgs::msg::Twist cmd_msg;
 
     if (obstacle_detected_r_ && obstacle_detected_l_) {
-        cmd_msg.linear.y = -0.2;
-        cmd_msg.linear.x = 0.0;
-    } else if (obstacle_detected_r_) {
-        cmd_msg.linear.y = -0.2;
-        cmd_msg.linear.x = 0.0;
-    } else if (obstacle_detected_l_) {
         cmd_msg.linear.y = 0.2;
         cmd_msg.linear.x = 0.0;
+        RCLCPP_INFO(this->get_logger(), "Obstacle detected in front and shafting left");
+    } else if (obstacle_detected_r_) {
+        cmd_msg.linear.y = 0.2;
+        cmd_msg.linear.x = 0.0;
+        RCLCPP_INFO(this->get_logger(), "Obstacle detected on the right and shafting left");
+    } else if (obstacle_detected_l_) {
+        cmd_msg.linear.y = -0.2;
+        cmd_msg.linear.x = 0.0;
+        RCLCPP_INFO(this->get_logger(), "Obstacle detected on the lfet and shafting right");
     } else {
         cmd_msg.linear.y = 0.0;
         cmd_msg.linear.x = 0.2;
@@ -109,4 +111,8 @@ void ObstacleAvoidance::stopRobot() {
     cmd_msg.linear.x = 0.0;
     cmd_msg.angular.z = 0.0;
     cmd_vel_publisher_->publish(cmd_msg);
+}
+
+bool ObstacleAvoidance::GoalReached() {
+    return goal_reached_;
 }

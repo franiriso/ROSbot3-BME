@@ -9,7 +9,8 @@
 
 class ObstacleAvoidance : public rclcpp::Node {
 public:
-    ObstacleAvoidance();
+    ObstacleAvoidance(const rclcpp::NodeOptions &options);
+    bool GoalReached();
 
 private:
     void lidarCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
