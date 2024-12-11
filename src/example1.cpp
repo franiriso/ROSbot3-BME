@@ -21,3 +21,11 @@ int main(int argc, char **argv) {
     rclcpp::shutdown();
     return 0;
 }
+
+/*
+To test this example, execute the following lines:
+colcon build --packages-select rosbot_3_bme
+source install/setup.bash
+
+ros2 run rosbot_3_bme obstacle_avoidance_node
+*/
