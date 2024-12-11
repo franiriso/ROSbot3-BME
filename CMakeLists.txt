@@ -21,7 +21,7 @@ include_directories(include/rosbot_3_bme)
 
 add_executable(test_node src/nodes/test_node.cpp)
 add_executable(print_lidar_node src/nodes/print_lidar_node.cpp)
-add_executable(obstacle_avoidance_node src/example1.cpp src/nodes/obstacle_avoidance_node.cpp)
+add_executable(obstacle_avoidance_node src/obstacle_avoidance.cpp src/nodes/obstacle_avoidance_node.cpp)
 
 
 # Link dependencies to targets
