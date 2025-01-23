@@ -139,29 +139,20 @@ ros2 run rosbot_3_bme <test_example>
 
 ## Contributing
 
-We welcome contributions to improve the project! Here's how you can get started:
+We welcome contributions to improve the project! You can add some more examples or new subprojects for both the simulation and real implementation of the RosBot3 model.
 
-Fork the repository on GitHub.
-Create a new branch for your feature or bugfix:
+Here's how you can get started:
 
-```bash
-git checkout -b feature-or-bugfix-name
-```
+1. Fork the repository on GitHub.
 
-Make your changes and test them thoroughly.
-Commit your changes:
+2. Create a new branch for your feature or bugfix.
 
-```bash
-git commit -m "Describe your feature or fix"
-```
+3. Make your changes and test them thoroughly.
 
-Push the branch to your fork:
+4. Push the branch to your fork.
 
-```bash
-git push origin feature-or-bugfix-name
-```
+5. Open a pull request on the main repository.
 
-Open a pull request on the main repository.
 Note: Before submitting, ensure your code follows ROS2 conventions and is properly documented.
 
 ---
